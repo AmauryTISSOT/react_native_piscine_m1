@@ -1,0 +1,79 @@
+package handlers
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"os"
+	"path/filepath"
+
+	"backend/db"
+	"backend/models"
+)
+
+// GetPhotoHandler sert un fichier photo depuis le dossier uploads
+func GetPhotoHandler(w http.ResponseWriter, r *http.Request) {
+	filename := filepath.Base(r.URL.Path)
+	filePath := filepath.Join("./uploads", filename)
+	fmt.Printf("GET PHOTO %s", filePath)
+	http.ServeFile(w, r, filePath)
+}
+
+// ListAllPhotosHandler retourne la liste de toutes les photos avec URL
+func ListAllPhotosHandler(w http.ResponseWriter, r *http.Request) {
+	files, err := os.ReadDir("./uploads")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var urls []string
+	baseURL := getBaseURL(r)
+	for _, file := range files {
+		if !file.IsDir() {
+			urls = append(urls, fmt.Sprintf("%s/photos/%s", baseURL, file.Name()))
+		}
+	}
+
+	fmt.Println("Liste des photos :", urls)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(urls)
+}
+
+// ListPhotosByDateHandler retourne toutes les photos triées par date
+func ListPhotosByDateHandler(w http.ResponseWriter, r *http.Request) {
+	rows, err := db.Conn.Query(r.Context(),
+		"SELECT id, date, latitude, longitude FROM photos ORDER BY date ASC")
+	if err != nil {
+		http.Error(w, "Database error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var photos []models.Photo
+	baseURL := getBaseURL(r)
+	for rows.Next() {
+		var p models.Photo
+		var dateVal string
+		if err := rows.Scan(&p.ID, &dateVal, &p.Latitude, &p.Longitude); err != nil {
+			http.Error(w, "Scan error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		p.Date = dateVal
+		p.URL = fmt.Sprintf("%s/photos/%s.jpg", baseURL, p.ID) // gérer l'extension si besoin
+		photos = append(photos, p)
+	}
+
+	fmt.Println("Liste des photos par dates :", photos)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(photos)
+}
+
+// utilitaire interne pour générer la base URL
+func getBaseURL(r *http.Request) string {
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+	return fmt.Sprintf("%s://%s", scheme, r.Host)
+}
