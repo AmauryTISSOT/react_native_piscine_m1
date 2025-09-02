@@ -1,6 +1,5 @@
-import * as FileSystem from "expo-file-system";
 import React, { useEffect, useState } from "react";
-import { FlatList, Image, StyleSheet, View } from "react-native";
+import { Alert, FlatList, Image, StyleSheet, View } from "react-native";
 
 export default function Photos() {
     const [photos, setPhotos] = useState([]);
@@ -11,16 +10,16 @@ export default function Photos() {
 
     const loadPhotos = async () => {
         try {
-            const files = await FileSystem.readDirectoryAsync(
-                FileSystem.documentDirectory
-            );
-            const imageFiles = files
-                .filter((file) => file.endsWith(".jpg"))
-                .map((file) => FileSystem.documentDirectory + file);
+            const response = await fetch("http://192.168.1.199:8080/list");
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-            setPhotos(imageFiles);
+            const data = await response.json();
+            setPhotos(data);
         } catch (err) {
-            console.log("Erreur lecture dossier photos:", err);
+            console.log("Erreur chargement photos:", err);
+            Alert.alert("Erreur chargement photos", err.message);
         }
     };
 
@@ -29,6 +28,7 @@ export default function Photos() {
             <FlatList
                 data={photos}
                 keyExtractor={(item, index) => index.toString()}
+                numColumns={2}
                 renderItem={({ item }) => (
                     <Image source={{ uri: item }} style={styles.photo} />
                 )}
@@ -41,10 +41,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff",
+        padding: 5,
     },
     photo: {
-        width: 200,
-        height: 200,
+        width: 160,
+        height: 160,
         margin: 5,
         borderRadius: 10,
     },
