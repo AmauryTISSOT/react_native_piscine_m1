@@ -23,7 +23,7 @@ Le backend est containerisé via **Docker Compose** et utilise **PostgreSQL** co
 1. Depuis la racine du projet (où se trouve `docker-compose.yml`) :
 
 ```bash
-docker-compose up -d
+docker-compose up --build
 ```
 
 2. Les services seront créés :
