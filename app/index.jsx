@@ -9,7 +9,7 @@ const App = () => {
                 resizeMode="cover"
                 style={styles.image}
             >
-                <Text style={styles.text}> Piscine 01 </Text>
+                <Text style={styles.title}> Piscine 01 </Text>
             </ImageBackground>
         </View>
     );
@@ -19,12 +19,13 @@ export default App;
 
 const styles = StyleSheet.create({
     container: { flex: 1, flexDirection: "column" },
-    text: {
+    title: {
         color: "white",
         fontSize: 42,
         fontWeight: "bold",
         textAlign: "center",
         backgroundColor: "rgba(0,0,0,0.5)",
+        marginBottom: 20,
     },
     image: {
         width: "100%",
@@ -32,5 +33,28 @@ const styles = StyleSheet.create({
         flex: 1,
         resizeMode: "cover",
         justifyContent: "center",
+    },
+    link: {
+        color: "white",
+        fontSize: 42,
+        fontWeight: "bold",
+        textAlign: "center",
+        textDecorationLine: "underline",
+        backgroundColor: "rgba(0,0,0,0.5)",
+        padding: 4,
+    },
+    button: {
+        height: 60,
+        borderRadius: 20,
+        backgroundColor: "rgba(0,0,0,0.75)",
+        padding: 6,
+        justifyContent: "center",
+    },
+    buttonText: {
+        color: "white",
+        fontSize: 16,
+        fontWeight: "bold",
+        textAlign: "center",
+        padding: 4,
     },
 });
