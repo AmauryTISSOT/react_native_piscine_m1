@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { View, Text, Image, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { styles } from "../Profile/styles/profile.styles";
 
 const initialProfile = {
@@ -28,13 +28,11 @@ const Profile = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.card}>
                 <View style={styles.avatarContainer}>
                     <Image
-                        source={{
-                            uri: "https://randomuser.me/api/portraits/men/1.jpg",
-                        }}
+                        source={{ uri: "https://randomuser.me/api/portraits/men/1.jpg" }}
                         style={styles.avatar}
                     />
                     {isEditing ? (
@@ -51,9 +49,7 @@ const Profile = () => {
                             <TextInput
                                 style={styles.input}
                                 value={profile.email}
-                                onChangeText={(text) =>
-                                    handleChange("email", text)
-                                }
+                                onChangeText={(text) => handleChange("email", text)}
                                 keyboardType="email-address"
                             />
                         </>
@@ -98,10 +94,7 @@ const Profile = () => {
                     <Text style={styles.infoLabel}>Bio</Text>
                     {isEditing ? (
                         <TextInput
-                            style={[
-                                styles.input,
-                                { height: 100, textAlignVertical: "top" },
-                            ]}
+                            style={[styles.input, { height: 100, textAlignVertical: "top" }]}
                             value={profile.bio}
                             onChangeText={(text) => handleChange("bio", text)}
                             multiline
@@ -113,23 +106,17 @@ const Profile = () => {
 
                 <View style={styles.buttonContainer}>
                     {!isEditing ? (
-                        <TouchableOpacity
-                            style={[styles.button, styles.editButton]}
-                            onPress={handleEditPress}
-                        >
+                        <TouchableOpacity style={[styles.button, styles.editButton]} onPress={handleEditPress}>
                             <Text style={styles.buttonText}>Modifier</Text>
                         </TouchableOpacity>
                     ) : (
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={handleSavePress}
-                        >
+                        <TouchableOpacity style={styles.button} onPress={handleSavePress}>
                             <Text style={styles.buttonText}>Enregistrer</Text>
                         </TouchableOpacity>
                     )}
                 </View>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
