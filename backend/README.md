@@ -50,10 +50,13 @@ postgres://user:rby6014vtziqaRwF4VEINxfnaxtrIZCaX5@db:5432/photosdb
 
 ## Endpoints
 
-| Endpoint             | Méthode | Description                                                                            |
-| -------------------- | ------- | -------------------------------------------------------------------------------------- |
-| `/upload`            | POST    | Upload d’une photo avec `photo`, `date`, `latitude`, `longitude` (multipart/form-data) |
-| `/photos/{filename}` | GET     | Récupère la photo avec le nom `{filename}` (UUID + extension)                          |
-| `/list`              | GET     | Liste toutes les photos disponibles avec leur URL                                      |
-| `/gps`               | GET     | Liste toutes les coordonnées GPS des photos avec ID et date                            |
-| `/photos/by-date`    | GET     | Liste toutes les photos triées par date avec URL et coordonnées                        |
+| Endpoint             | Méthode | Description                                                                                    |
+| -------------------- | ------- | ---------------------------------------------------------------------------------------------- |
+| `/upload`            | POST    | Upload d’une photo avec `photo`, `date`, `latitude`, `longitude` (multipart/form-data)         |
+| `/photos/{filename}` | GET     | Récupère la photo avec le nom `{filename}` (UUID + extension)                                  |
+| `/list`              | GET     | Liste toutes les photos disponibles avec leur URL                                              |
+| `/gps`               | GET     | Liste toutes les coordonnées GPS des photos avec ID et date                                    |
+| `/photos/by-date`    | GET     | Liste toutes les photos triées par date avec URL et coordonnées                                |
+| `/createUser`        | POST    | Crée un utilisateur avec `email` et `password` (JSON body)                                     |
+| `/updateUser`        | PATCH   | Met à jour un utilisateur existant via `email` (clé) et champs `first_name`, `last_name`, etc. |
+| `/getUser`           | GET     | Récupère les informations d’un utilisateur via `email`                                         |
