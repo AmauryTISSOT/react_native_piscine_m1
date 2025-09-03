@@ -1,12 +1,18 @@
-import React from "react";
-import { Text, View } from "react-native";
+// app/(tabs)/map.jsx
+import { StyleSheet, View } from "react-native";
+import MapPreview from "../../components/MapPreview";
+import { usePhotoLocation } from "../../constants/PhotoLocationContext";
 
-const map = () => {
-    return (
-        <View>
-            <Text>map</Text>
-        </View>
-    );
-};
+export default function MapTab() {
+  const { coords } = usePhotoLocation();
 
-export default map;
+  return (
+    <View style={styles.container}>
+      <MapPreview coords={coords} /> 
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1 },
+});
