@@ -2,6 +2,7 @@ import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
 import { Alert, FlatList, Image, StyleSheet, View } from "react-native";
+import { backAPI, photoUtils } from "../services/api";
 
 export default function TakePhoto() {
     const [photos, setPhotos] = useState([]);
@@ -9,6 +10,71 @@ export default function TakePhoto() {
     useEffect(() => {
         openCamera();
     }, []);
+
+    const uploadPhoto = async (photoAsset) => {
+        try {
+            const currentDate = photoUtils.formatDateForAPI(new Date());
+            const fakeLatitude = 48.8566; // Utiliser des nombres, pas des strings
+            const fakeLongitude = 2.3522;
+
+            // Créer l'objet photoFile correctement
+            const photoFile = {
+                uri: photoAsset.uri,
+                type: "image/jpeg",
+                name: `photo_${Date.now()}.jpg`,
+            };
+
+            console.log("Tentative d'upload:", {
+                photoFile,
+                date: currentDate,
+                latitude: fakeLatitude,
+                longitude: fakeLongitude,
+            });
+
+            const result = await backAPI.uploadPhotos(
+                photoFile, // Passer l'objet photoFile, pas le tableau photos
+                currentDate,
+                fakeLatitude,
+                fakeLongitude
+            );
+
+            console.log("Upload réussi:", result);
+            Alert.alert(
+                "Succès",
+                `Photo envoyée avec succès !\nID: ${result.id}`,
+                [{ text: "OK" }]
+            );
+
+            return result;
+        } catch (err) {
+            console.error("Erreur upload complète:", err);
+
+            let errorMessage = "Erreur lors de l'upload";
+
+            if (
+                err.code === "NETWORK_ERROR" ||
+                err.message === "Network Error"
+            ) {
+                errorMessage =
+                    "Impossible de se connecter au serveur. Vérifiez votre connexion.";
+            } else if (err.response?.status === 400) {
+                errorMessage = "Données invalides envoyées au serveur.";
+            } else if (err.response?.status === 500) {
+                errorMessage = "Erreur serveur. Réessayez plus tard.";
+            }
+
+            Alert.alert("Erreur", errorMessage, [
+                {
+                    text: "Réessayer",
+                    onPress: () => uploadPhoto(photoAsset),
+                },
+                {
+                    text: "Annuler",
+                    style: "cancel",
+                },
+            ]);
+        }
+    };
 
     const openCamera = async () => {
         // Demander la permission
@@ -33,6 +99,8 @@ export default function TakePhoto() {
                 await FileSystem.copyAsync({ from: sourceUri, to: newPath });
 
                 setPhotos([newPath]);
+
+                await uploadPhoto({ uri: newPath });
             } catch (err) {
                 console.log("Erreur sauvegarde:", err);
             }
