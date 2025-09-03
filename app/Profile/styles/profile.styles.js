@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        paddingTop: 90, // Marge supérieure pour éviter le Dynamic Island
+        paddingTop: 70,
         backgroundColor: "#f8f9fa",
     },
     card: {
