@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from "react";
+import { backAPI } from "@/services/api";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useCallback, useState } from "react";
 import { Alert, FlatList, Image, StyleSheet, View } from "react-native";
 
 export default function Photos() {
     const [photos, setPhotos] = useState([]);
 
-    useEffect(() => {
-        loadPhotos();
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            loadPhotos();
+        }, [])
+    );
 
     const loadPhotos = async () => {
         try {
-            const response = await fetch("http://192.168.1.199:8080/list");
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
+            const data = await backAPI.getAllPhotos();
             setPhotos(data);
         } catch (err) {
             console.log("Erreur chargement photos:", err);
