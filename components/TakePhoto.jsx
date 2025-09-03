@@ -2,44 +2,77 @@ import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import React, { useEffect, useState } from "react";
 import { Alert, FlatList, Image, StyleSheet, View } from "react-native";
+import { backAPI, photoUtils } from "../services/api";
 
 export default function TakePhoto() {
     const [photos, setPhotos] = useState([]);
-
-    const backendUrl = "http://192.168.1.199:8080/upload";
 
     useEffect(() => {
         openCamera();
     }, []);
 
-    const uploadPhoto = async (uri) => {
+    const uploadPhoto = async (photoAsset) => {
         try {
-            // Crée un FormData pour le multipart upload
-            const formData = new FormData();
-            formData.append("photo", {
-                uri,
-                name: `photo_${Date.now()}.jpg`,
+            const currentDate = photoUtils.formatDateForAPI(new Date());
+            const fakeLatitude = 48.8566; // Utiliser des nombres, pas des strings
+            const fakeLongitude = 2.3522;
+
+            // Créer l'objet photoFile correctement
+            const photoFile = {
+                uri: photoAsset.uri,
                 type: "image/jpeg",
+                name: `photo_${Date.now()}.jpg`,
+            };
+
+            console.log("Tentative d'upload:", {
+                photoFile,
+                date: currentDate,
+                latitude: fakeLatitude,
+                longitude: fakeLongitude,
             });
 
-            formData.append("date", new Date().toISOString());
-            formData.append("latitude", "48.8566"); //TODO: récupérer la latitude du gps
-            formData.append("longitude", "2.3522"); //TODO: récupérer la longitude du gps
+            const result = await backAPI.uploadPhotos(
+                photoFile, // Passer l'objet photoFile, pas le tableau photos
+                currentDate,
+                fakeLatitude,
+                fakeLongitude
+            );
 
-            const response = await fetch(backendUrl, {
-                method: "POST",
-                body: formData,
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+            console.log("Upload réussi:", result);
+            Alert.alert(
+                "Succès",
+                `Photo envoyée avec succès !\nID: ${result.id}`,
+                [{ text: "OK" }]
+            );
 
-            const data = await response.json();
-            console.log("Upload réussi:", data);
-            Alert.alert("Photo envoyée avec succès !");
+            return result;
         } catch (err) {
-            console.log("Erreur upload:", err);
-            Alert.alert("Erreur lors de l’upload");
+            console.error("Erreur upload complète:", err);
+
+            let errorMessage = "Erreur lors de l'upload";
+
+            if (
+                err.code === "NETWORK_ERROR" ||
+                err.message === "Network Error"
+            ) {
+                errorMessage =
+                    "Impossible de se connecter au serveur. Vérifiez votre connexion.";
+            } else if (err.response?.status === 400) {
+                errorMessage = "Données invalides envoyées au serveur.";
+            } else if (err.response?.status === 500) {
+                errorMessage = "Erreur serveur. Réessayez plus tard.";
+            }
+
+            Alert.alert("Erreur", errorMessage, [
+                {
+                    text: "Réessayer",
+                    onPress: () => uploadPhoto(photoAsset),
+                },
+                {
+                    text: "Annuler",
+                    style: "cancel",
+                },
+            ]);
         }
     };
 
@@ -67,8 +100,7 @@ export default function TakePhoto() {
 
                 setPhotos([newPath]);
 
-                // Upload vers le backend
-                await uploadPhoto(sourceUri);
+                await uploadPhoto({ uri: newPath });
             } catch (err) {
                 console.log("Erreur sauvegarde:", err);
             }
