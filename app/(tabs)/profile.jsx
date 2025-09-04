@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, Alert, KeyboardAvoidingView, Platform } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 import { styles } from "../Profile/styles/profile.styles";
@@ -30,6 +31,11 @@ const Profile = () => {
         loadPhotoCount();
     }, []);
 
+    useFocusEffect(
+        React.useCallback(() => {
+            loadPhotoCount();
+        }, [])
+    );
 
     const loadPhotos = async () => {
         try {
