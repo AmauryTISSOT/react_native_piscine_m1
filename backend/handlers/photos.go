@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"backend/db"
 	"backend/models"
@@ -54,12 +55,12 @@ func ListPhotosByDateHandler(w http.ResponseWriter, r *http.Request) {
 	baseURL := getBaseURL(r)
 	for rows.Next() {
 		var p models.Photo
-		var dateVal string
+		var dateVal time.Time
 		if err := rows.Scan(&p.ID, &dateVal, &p.Latitude, &p.Longitude); err != nil {
 			http.Error(w, "Scan error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-		p.Date = dateVal
+		p.Date = dateVal.Format(time.RFC3339)
 		p.URL = fmt.Sprintf("%s/photos/%s.jpg", baseURL, p.ID) // gérer l'extension si besoin
 		photos = append(photos, p)
 	}
