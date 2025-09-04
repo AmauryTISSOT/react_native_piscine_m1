@@ -70,6 +70,26 @@ export const backAPI = {
         const response = await API.get("/gps");
         return response.data;
     },
+
+    createUser: async (email, password) => {
+        const response = await API.post("/createUser", { email, password });
+        return response.data; // { id: string }
+    },
+
+    updateUser: async (email, updates) => {
+        const response = await API.patch(
+            `/updateUser?email=${encodeURIComponent(email)}`,
+            updates
+        );
+        return response.data; // { message: "User updated successfully" }
+    },
+
+    getUser: async (email) => {
+        const response = await API.get(
+            `/getUser?email=${encodeURIComponent(email)}`
+        );
+        return response.data; // User object
+    },
 };
 
 export const photoUtils = {
