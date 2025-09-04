@@ -30,21 +30,20 @@ func main() {
 	userRepo := &repository.UserRepository{DB: db.Conn}
 	userHandler := &handlers.UserHandler{Repo: userRepo}
 
-	// Enregistrement des routes HTTP
-	http.HandleFunc("/upload", handlers.UploadPhotoHandler)
-	http.HandleFunc("/photos/", handlers.GetPhotoHandler)
-	http.HandleFunc("/photos", handlers.GetPhotoById)
-	http.HandleFunc("/list", handlers.ListAllPhotosHandler)
-	http.HandleFunc("/gps", handlers.ListGPSHandler)
-	http.HandleFunc("/photos/by-date", handlers.ListPhotosByDateHandler)
-	http.HandleFunc("/photos/count", handlers.GetPhotosCount)
+	// Routes Photos
+	http.HandleFunc("/photos/upload", handlers.UploadPhotoHandler)       // POST
+	http.HandleFunc("/photos", handlers.ListAllPhotosHandler)            // GET
+	http.HandleFunc("/photos/", handlers.GetPhotoHandler)                // GET
+	http.HandleFunc("/photos/by-date", handlers.ListPhotosByDateHandler) // GET
+	http.HandleFunc("/photos/count", handlers.GetPhotosCount)            // GET
+	http.HandleFunc("/photos/gps", handlers.ListGPSHandler)              // GET
 
-	// Routes utilisateurs
-	http.HandleFunc("/createUser", userHandler.CreateUser)
-	http.HandleFunc("/updateUser", userHandler.UpdateUser)
-	http.HandleFunc("/getUser", userHandler.GetUser)
-	http.HandleFunc("/user/profilepicture", userHandler.GetUserProfileImage)
-	http.HandleFunc("/user/updateprofilepicture", userHandler.UpdateUserProfileImage)
+	// Routes Utilisateurs
+	http.HandleFunc("/users", userHandler.CreateUser)                                    // POST
+	http.HandleFunc("/users/update", userHandler.UpdateUser)                             // PUT
+	http.HandleFunc("/users/get", userHandler.GetUser)                                   // GET
+	http.HandleFunc("/users/profile-picture", userHandler.GetUserProfileImage)           // GET
+	http.HandleFunc("/users/profile-picture/update", userHandler.UpdateUserProfileImage) // PUT
 
 	// Démarrage du serveur
 	fmt.Println("Server started at :8080")
