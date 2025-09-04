@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
 import { styles } from "../Profile/styles/profile.styles";
+import { backAPI } from "@/services/api";
 
 const initialProfile = {
     nom: "Fouquet",
@@ -9,11 +11,29 @@ const initialProfile = {
     tel: "+33 6 12 34 56 78",
     pays: "France",
     bio: "Passionné de voyage et de nouvelles technologies. J’aime explorer le monde et capturer des moments uniques à travers mes photos.",
+    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
 };
 
 const Profile = () => {
     const [profile, setProfile] = useState(initialProfile);
     const [isEditing, setIsEditing] = useState(false);
+    const [photos, setPhotos] = useState([]);
+
+    useEffect(() => {
+        if (isEditing) {
+            loadPhotos();
+        }
+    }, [isEditing]);
+
+    const loadPhotos = async () => {
+        try {
+            const data = await backAPI.getAllPhotos();
+            setPhotos(data);
+        } catch (err) {
+            console.log("Erreur chargement photos:", err);
+            Alert.alert("Erreur chargement photos", err.message);
+        }
+    };
 
     const handleEditPress = () => {
         setIsEditing(true);
@@ -27,16 +47,46 @@ const Profile = () => {
         setProfile({ ...profile, [field]: value });
     };
 
+    const pickImageFromGallery = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setProfile({ ...profile, avatar: result.assets[0].uri });
+        }
+    };
+
+    const pickImageFromAppPhotos = (photoUri) => {
+        setProfile({ ...profile, avatar: photoUri });
+    };
+
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.card}>
                 <View style={styles.avatarContainer}>
-                    <Image
-                        source={{
-                            uri: "https://randomuser.me/api/portraits/men/1.jpg",
-                        }}
-                        style={styles.avatar}
-                    />
+                    <Image source={{ uri: profile.avatar }} style={styles.avatar} />
+                    {isEditing && (
+                        <>
+                            <TouchableOpacity style={styles.changePhotoButton} onPress={pickImageFromGallery}>
+                                <Text style={styles.buttonText}>Choisir depuis la galerie</Text>
+                            </TouchableOpacity>
+                            <View style={styles.photoOptionsContainer}>
+                                {photos.map((photoUri, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={styles.photoOptionButton}
+                                        onPress={() => pickImageFromAppPhotos(photoUri)}
+                                    >
+                                        <Text style={styles.buttonText}>Photo {index + 1}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </>
+                    )}
                     {isEditing ? (
                         <>
                             <TextInput
@@ -51,9 +101,7 @@ const Profile = () => {
                             <TextInput
                                 style={styles.input}
                                 value={profile.email}
-                                onChangeText={(text) =>
-                                    handleChange("email", text)
-                                }
+                                onChangeText={(text) => handleChange("email", text)}
                                 keyboardType="email-address"
                             />
                         </>
@@ -98,10 +146,7 @@ const Profile = () => {
                     <Text style={styles.infoLabel}>Bio</Text>
                     {isEditing ? (
                         <TextInput
-                            style={[
-                                styles.input,
-                                { height: 100, textAlignVertical: "top" },
-                            ]}
+                            style={[styles.input, { height: 100, textAlignVertical: "top" }]}
                             value={profile.bio}
                             onChangeText={(text) => handleChange("bio", text)}
                             multiline
@@ -113,23 +158,17 @@ const Profile = () => {
 
                 <View style={styles.buttonContainer}>
                     {!isEditing ? (
-                        <TouchableOpacity
-                            style={[styles.button, styles.editButton]}
-                            onPress={handleEditPress}
-                        >
+                        <TouchableOpacity style={[styles.button, styles.editButton]} onPress={handleEditPress}>
                             <Text style={styles.buttonText}>Modifier</Text>
                         </TouchableOpacity>
                     ) : (
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={handleSavePress}
-                        >
+                        <TouchableOpacity style={styles.button} onPress={handleSavePress}>
                             <Text style={styles.buttonText}>Enregistrer</Text>
                         </TouchableOpacity>
                     )}
                 </View>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 

@@ -69,6 +69,18 @@ func ListPhotosByDateHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(photos)
 }
 
+func GetPhotosCount(w http.ResponseWriter, r *http.Request) {
+	var count int
+	err := db.Conn.QueryRow(r.Context(), "SELECT COUNT(*) FROM photos").Scan(&count)
+	if err != nil {
+		http.Error(w, "Database error :"+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Printf("Nombres de photos en BDD: %v", count)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]int{"count": count})
+}
+
 // utilitaire interne pour générer la base URL
 func getBaseURL(r *http.Request) string {
 	scheme := "http"
