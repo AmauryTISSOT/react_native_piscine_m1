@@ -1,11 +1,15 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#f8f9fa",
+    },
     scrollContainer: {
-        flexGrow: 1,
         padding: 20,
         paddingTop: 70,
-        backgroundColor: "#f8f9fa",
+        flexGrow: 1,
+        paddingBottom: 100
     },
     card: {
         backgroundColor: "#fff",
@@ -16,6 +20,7 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 2,
+        marginBottom: 20,
     },
     avatarContainer: {
         alignItems: "center",
