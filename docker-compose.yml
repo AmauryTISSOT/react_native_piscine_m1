@@ -1,10 +1,13 @@
 services:
     backend:
-        build: .
+        build:
+            context: .
+            dockerfile: Dockerfile
+        working_dir: /app/backend
         ports:
             - "8080:8080"
         volumes:
-            - ./uploads:/app/uploads
+            - ./uploads:/app/backend/uploads
         depends_on:
             - db
 
