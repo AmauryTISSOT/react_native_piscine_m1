@@ -36,6 +36,7 @@ func main() {
 	http.HandleFunc("/list", handlers.ListAllPhotosHandler)
 	http.HandleFunc("/gps", handlers.ListGPSHandler)
 	http.HandleFunc("/photos/by-date", handlers.ListPhotosByDateHandler)
+	http.HandleFunc("/photos/count", handlers.GetPhotosCount)
 
 	// Routes utilisateurs
 	http.HandleFunc("/createUser", userHandler.CreateUser)
