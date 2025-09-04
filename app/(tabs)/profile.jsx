@@ -5,15 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { styles } from "../Profile/styles/profile.styles";
 import { backAPI } from "@/services/api";
 
-const initialProfile = {
-    nom: "Fouquet",
-    prenom: "Adrien",
-    email: "adrien.fouquet@example.com",
-    tel: "+33 6 12 34 56 78",
-    pays: "France",
-    bio: "Passionné de voyage et de nouvelles technologies. J’aime explorer le monde et capturer des moments uniques à travers mes photos.",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-};
+let initialProfile = {};
 
 const Profile = () => {
     const [profile, setProfile] = useState(initialProfile);
@@ -28,6 +20,7 @@ const Profile = () => {
     }, [isEditing]);
 
     useEffect(() => {
+        loadUser();
         loadPhotoCount();
     }, []);
 
@@ -36,6 +29,22 @@ const Profile = () => {
             loadPhotoCount();
         }, [])
     );
+
+    const loadUser = async () => {
+        try {
+            const user = await backAPI.getUser("adrien.fouquet@example.com");
+            initialProfile.nom = user.last_name;
+            initialProfile.prenom = user.first_name;
+            initialProfile.email = user.email;
+            initialProfile.tel = user.phone;
+            initialProfile.pays = user.country;
+            initialProfile.bio = user.bio;
+            initialProfile.avatar = "https://randomuser.me/api/portraits/men/1.jpg";
+        } catch (err) {
+            console.log("Erreur chargement nombre de photos:", err);
+            Alert.alert("Erreur chargement du nombre de photos", err.message);
+        }
+    };
 
     const loadPhotos = async () => {
         try {
