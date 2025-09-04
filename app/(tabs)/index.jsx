@@ -1,7 +1,15 @@
 import waterBackground from "@/assets/images/water_background.jpg";
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
+import { ImageBackground, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const App = () => {
+    const navigation = useNavigation();
+
+    const navigateTo = (screen) => {
+        navigation.navigate(screen);
+    };
+
     return (
         <View style={styles.container}>
             <ImageBackground
@@ -9,7 +17,62 @@ const App = () => {
                 resizeMode="cover"
                 style={styles.image}
             >
-                <Text style={styles.title}> Piscine 01 </Text>
+                <View style={styles.overlay}>
+                    <Text style={styles.title}>Bienvenue sur l'application Piscine !</Text>
+
+                    <View style={styles.buttonContainer}>
+
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => navigateTo("calendar")}
+                        >
+                            <View style={styles.buttonContent}>
+                                <Ionicons name="calendar" size={20} style={styles.buttonIcon} />
+                                <Text style={styles.buttonText}>Calendrier</Text>
+                            </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => navigateTo("camera")}
+                        >
+                            <View style={styles.buttonContent}>
+                                <Ionicons name="camera" size={20} style={styles.buttonIcon} />
+                                <Text style={styles.buttonText}>Caméra</Text>
+                            </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => navigateTo("map")}
+                        >
+                            <View style={styles.buttonContent}>
+                                <Ionicons name="map" size={20} style={styles.buttonIcon} />
+                                <Text style={styles.buttonText}>Carte</Text>
+                            </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => navigateTo("photos")}
+                        >
+                            <View style={styles.buttonContent}>
+                                <Ionicons name="images" size={20} style={styles.buttonIcon} />
+                                <Text style={styles.buttonText}>Mes photos</Text>
+                            </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.button}
+                            onPress={() => navigateTo("profile")}
+                        >
+                            <View style={styles.buttonContent}>
+                                <Ionicons name="person" size={20} style={styles.buttonIcon} />
+                                <Text style={styles.buttonText}>Profil</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </ImageBackground>
         </View>
     );
@@ -18,44 +81,55 @@ const App = () => {
 export default App;
 
 const styles = StyleSheet.create({
-    container: { flex: 1, flexDirection: "column" },
-    title: {
-        color: "white",
-        fontSize: 42,
-        fontWeight: "bold",
-        textAlign: "center",
-        backgroundColor: "rgba(0,0,0,0.5)",
-        marginBottom: 20,
+    container: {
+        flex: 1,
     },
     image: {
-        width: "100%",
-        height: "100%",
         flex: 1,
-        resizeMode: "cover",
-        justifyContent: "center",
+        justifyContent: "flex-start",
     },
-    link: {
-        color: "white",
-        fontSize: 42,
+    overlay: {
+        flex: 1,
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        marginTop: 100,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        padding: 20,
+        paddingTop: 30,
+    },
+    title: {
+        color: "#2c3e50",
+        fontSize: 32,
         fontWeight: "bold",
         textAlign: "center",
-        textDecorationLine: "underline",
-        backgroundColor: "rgba(0,0,0,0.5)",
-        padding: 4,
+        marginBottom: 30,
+        paddingTop: 10,
+    },
+    buttonContainer: {
+        flex: 1,
     },
     button: {
-        height: 60,
-        borderRadius: 20,
-        backgroundColor: "rgba(0,0,0,0.75)",
-        padding: 6,
-        justifyContent: "center",
+        backgroundColor: "#fff",
+        borderRadius: 15,
+        marginBottom: 15,
+        padding: 15,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    buttonContent: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    buttonIcon: {
+        color: "#3498db",
+        marginRight: 15,
     },
     buttonText: {
-        color: "white",
-        fontSize: 16,
-        fontWeight: "bold",
-        textAlign: "center",
-        padding: 4,
+        color: "#2c3e50",
+        fontWeight: "500",
+        fontSize: 18,
     },
-  
 });
