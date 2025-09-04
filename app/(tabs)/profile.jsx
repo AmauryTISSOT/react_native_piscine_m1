@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, Alert, KeyboardAvoidingView, Platform } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { styles } from "../Profile/styles/profile.styles";
+import { styles } from "@/app/styles/profile.styles";
 import { backAPI } from "@/services/api";
 
 const Profile = () => {

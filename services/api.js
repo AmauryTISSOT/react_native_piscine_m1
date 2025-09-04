@@ -42,8 +42,9 @@ export const backAPI = {
         return response.data;
     },
 
-    getPhotosById: (photoId) => {
-        return `${API_BACKEND_URL}/photos/${photoId}`;
+    getPhotosById: async (photoId) => {
+        const response = await API.get(`/photos?id=${photoId}`);
+        return response.data;
     },
 
     getAllPhotos: async () => {
