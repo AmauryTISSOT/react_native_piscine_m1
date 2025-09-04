@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"backend/db"
@@ -18,6 +19,36 @@ func GetPhotoHandler(w http.ResponseWriter, r *http.Request) {
 	filePath := filepath.Join("./uploads", filename)
 	fmt.Printf("GET PHOTO %s", filePath)
 	http.ServeFile(w, r, filePath)
+}
+
+func GetPhotoById(w http.ResponseWriter, r *http.Request) {
+	imageID := r.URL.Query().Get("id")
+	fmt.Printf("Id=: %v", imageID)
+	files, err := os.ReadDir("./uploads")
+	if err != nil {
+		http.Error(w, "Unable to read uploads folder: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	var fullFileName string
+	for _, file := range files {
+		if !file.IsDir() && strings.HasPrefix(file.Name(), imageID) {
+			fullFileName = file.Name()
+			break
+		}
+	}
+	if fullFileName == "" {
+		http.Error(w, "Photo not found", http.StatusNotFound)
+		return
+	}
+	baseURL := getBaseURL(r)
+	imageURL := fmt.Sprintf("%s/photos/%s", baseURL, fullFileName)
+
+	fmt.Println("PROFILE PICTURE URL :", imageURL)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"url": imageURL,
+	})
 }
 
 // ListAllPhotosHandler retourne la liste de toutes les photos avec URL
