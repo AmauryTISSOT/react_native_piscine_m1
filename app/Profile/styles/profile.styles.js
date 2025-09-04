@@ -105,4 +105,17 @@ export const styles = StyleSheet.create({
         borderRadius: 5,
         marginHorizontal: 5,
     },
+    statsBanner: {
+        backgroundColor: "#e9ecef",
+        padding: 15,
+        borderRadius: 8,
+        marginTop: 20,
+        alignItems: "center",
+    },
+    statsText: {
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#333",
+    },
+
 });

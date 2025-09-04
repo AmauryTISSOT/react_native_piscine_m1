@@ -70,6 +70,11 @@ export const backAPI = {
         return response.data;
     },
 
+    getCountPhotos: async () => {
+        const response = await API.get("/photos/count");
+        return response.data["count"];
+    },
+
     getGpsData: async () => {
         const response = await API.get("/gps");
         return response.data;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, Alert, KeyboardAvoidingView, Platform } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
 import { styles } from "../Profile/styles/profile.styles";
@@ -18,12 +19,23 @@ const Profile = () => {
     const [profile, setProfile] = useState(initialProfile);
     const [isEditing, setIsEditing] = useState(false);
     const [photos, setPhotos] = useState([]);
+    const [photoCount, setPhotoCount] = useState(0);
 
     useEffect(() => {
         if (isEditing) {
             loadPhotos();
         }
     }, [isEditing]);
+
+    useEffect(() => {
+        loadPhotoCount();
+    }, []);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            loadPhotoCount();
+        }, [])
+    );
 
     const loadPhotos = async () => {
         try {
@@ -32,6 +44,16 @@ const Profile = () => {
         } catch (err) {
             console.log("Erreur chargement photos:", err);
             Alert.alert("Erreur chargement photos", err.message);
+        }
+    };
+
+    const loadPhotoCount = async () => {
+        try {
+            const count = await backAPI.getCountPhotos();
+            setPhotoCount(count);
+        } catch (err) {
+            console.log("Erreur chargement nombre de photos:", err);
+            Alert.alert("Erreur chargement du nombre de photos", err.message);
         }
     };
 
@@ -86,7 +108,7 @@ const Profile = () => {
                                     <ScrollView
                                         horizontal={true}
                                         showsHorizontalScrollIndicator={true}
-                                        style={{ marginTop: 10 }}
+                                        style={{ marginTop: 10, marginBottom: 10 }}
                                     >
                                         {photos.map((photoUri, index) => (
                                             <TouchableOpacity
@@ -169,6 +191,13 @@ const Profile = () => {
                             <Text style={styles.bio}>{profile.bio}</Text>
                         )}
                     </View>
+
+                    <View style={styles.statsBanner}>
+                        <Text style={styles.statsText}>
+                            Nombre de photos prises sur application : {photoCount}
+                        </Text>
+                    </View>
+
 
                     <View style={styles.buttonContainer}>
                         {!isEditing ? (
