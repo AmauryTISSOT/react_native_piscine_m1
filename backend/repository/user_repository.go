@@ -42,3 +42,26 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (*models.
 	}
 	return &user, nil
 }
+
+func (r *UserRepository) GetUserProfilePicture(ctx context.Context, email string) (string, error) {
+	var profilePictureName string
+	err := r.DB.QueryRow(ctx,
+		`SELECT profile_picture_name 
+		 FROM users 
+		 WHERE email=$1`,
+		email).Scan(&profilePictureName)
+	if err != nil {
+		return "", err
+	}
+	return profilePictureName, nil
+}
+
+func (r *UserRepository) UpdateProfilePictureName(ctx context.Context, profilePictureName, email string) (int64, error) {
+	cmdTag, err := r.DB.Exec(ctx,
+		`UPDATE users
+		SET profile_picture_name=$1
+		WHERE email=$2`,
+		profilePictureName, email,
+	)
+	return cmdTag.RowsAffected(), err
+}

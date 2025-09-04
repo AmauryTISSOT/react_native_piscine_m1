@@ -22,7 +22,6 @@ export default function TabLayout() {
                 tabBarBackground: TabBarBackground,
                 tabBarStyle: Platform.select({
                     ios: {
-                        // Use a transparent background on iOS to show the blur effect
                         position: "absolute",
                     },
                     default: {},
@@ -32,7 +31,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: "Home",
+                    title: "Accueil",
                     tabBarIcon: ({ color }) => (
                         <IconSymbol
                             size={ICONSIZE}
@@ -45,7 +44,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="calendar"
                 options={{
-                    title: "Calendar",
+                    title: "Calendrier",
                     tabBarIcon: ({ color }) => (
                         <IconSymbol
                             size={ICONSIZE}
@@ -58,7 +57,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="camera"
                 options={{
-                    title: "Camera",
+                    title: "Caméra",
                     tabBarIcon: ({ color }) => (
                         <IconSymbol
                             size={ICONSIZE}
@@ -71,7 +70,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="map"
                 options={{
-                    title: "Maps",
+                    title: "Carte",
                     tabBarIcon: ({ color }) => (
                         <IconSymbol
                             size={ICONSIZE}
@@ -84,7 +83,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="photos"
                 options={{
-                    title: "Photos",
+                    title: "Mes photos",
                     tabBarIcon: ({ color }) => (
                         <IconSymbol
                             size={ICONSIZE}
@@ -97,7 +96,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="profile"
                 options={{
-                    title: "Profile",
+                    title: "Profil",
                     tabBarIcon: ({ color }) => (
                         <IconSymbol
                             size={ICONSIZE}

@@ -1,22 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, Alert, KeyboardAvoidingView, Platform } from "react-native";
-import * as ImagePicker from 'expo-image-picker';
+import * as ImagePicker from "expo-image-picker";
 import { styles } from "../Profile/styles/profile.styles";
 import { backAPI } from "@/services/api";
 
-const initialProfile = {
-    nom: "Fouquet",
-    prenom: "Adrien",
-    email: "adrien.fouquet@example.com",
-    tel: "+33 6 12 34 56 78",
-    pays: "France",
-    bio: "Passionné de voyage et de nouvelles technologies. J’aime explorer le monde et capturer des moments uniques à travers mes photos.",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-};
-
 const Profile = () => {
-    const [profile, setProfile] = useState(initialProfile);
+    const MAIL_USER = "adrien.fouquet@example.com";
+    const [profile, setProfile] = useState(null); // 👈 initialisé à null
     const [isEditing, setIsEditing] = useState(false);
     const [photos, setPhotos] = useState([]);
     const [photoCount, setPhotoCount] = useState(0);
@@ -28,14 +19,33 @@ const Profile = () => {
     }, [isEditing]);
 
     useEffect(() => {
+        loadUser();
         loadPhotoCount();
     }, []);
 
     useFocusEffect(
-        React.useCallback(() => {
+        useCallback(() => {
             loadPhotoCount();
         }, [])
     );
+
+    const loadUser = async () => {
+        try {
+            const user = await backAPI.getUser(MAIL_USER);
+            setProfile({
+                nom: user.last_name,
+                prenom: user.first_name,
+                email: user.email,
+                tel: user.phone,
+                pays: user.country,
+                bio: user.bio,
+                avatar: "https://randomuser.me/api/portraits/men/1.jpg",
+            });
+        } catch (err) {
+            console.log("Erreur chargement utilisateur:", err);
+            Alert.alert("Erreur chargement utilisateur", err.message);
+        }
+    };
 
     const loadPhotos = async () => {
         try {
@@ -61,8 +71,25 @@ const Profile = () => {
         setIsEditing(true);
     };
 
-    const handleSavePress = () => {
-        setIsEditing(false);
+    const handleSavePress = async () => {
+        try {
+            console.log(profile);
+            const payload = {
+                FirstName: profile.prenom,
+                LastName: profile.nom,
+                Phone: profile.tel,
+                Country: profile.pays,
+                Bio: profile.bio,
+            };
+
+            await backAPI.updateUser(MAIL_USER,payload);
+
+            Alert.alert("Succès", "Profil mis à jour !");
+            setIsEditing(false);
+        } catch (err) {
+            console.log("Erreur mise à jour utilisateur:", err);
+            Alert.alert("Erreur", err.message);
+        }
     };
 
     const handleChange = (field, value) => {
@@ -85,6 +112,14 @@ const Profile = () => {
     const pickImageFromAppPhotos = (photoUri) => {
         setProfile({ ...profile, avatar: photoUri });
     };
+
+    if (!profile) {
+        return (
+            <View style={styles.container}>
+                <Text>Chargement...</Text>
+            </View>
+        );
+    }
 
     return (
         <KeyboardAvoidingView

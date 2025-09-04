@@ -1,6 +1,10 @@
 import axios from "axios";
+import Constants from "expo-constants";
 
-const API_BACKEND_URL = "http://192.168.1.25:8080";
+const host = Constants.expoConfig?.hostUri?.split(":")[0] || "localhost";
+export const API_BACKEND_URL = `http://${host}:8080`;
+
+console.log("API URL:", API_BACKEND_URL);
 
 const API = axios.create({
     baseURL: API_BACKEND_URL,
@@ -95,6 +99,35 @@ export const backAPI = {
         );
         return response.data; // User object
     },
+
+    getUserProfileImage: async (email) => {
+        const response = await API.get(
+            `/user/profilepicture?email=${encodeURIComponent(email)}`
+        );
+        return response;
+    },
+
+    updateUserProfileImage: async (email, photoFile) => {
+        const formData = new FormData();
+        formData.append("photo", {
+            uri: photoFile.uri,
+            type: photoFile.type || "image/jpeg",
+            name: photoFile.name || "profile.jpg",
+        });
+
+        const response = await API.post(
+            `/user/updateprofilepicture?email=${encodeURIComponent(email)}`,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                timeout: 30000,
+            }
+        );
+
+        return response.data;
+    },
 };
 
 export const photoUtils = {
@@ -125,4 +158,3 @@ export const photoUtils = {
 };
 
 export { API };
-
