@@ -18,7 +18,7 @@ export default function CalendarScreen() {
 
   const loadPhotos = async () => {
     try {
-      const data = await backAPI.getAllPhotos(); // renvoie la liste d’objets
+      const data = await backAPI.getAllPhotosByDate(); // renvoie la liste d’objets
       console.log("Photos brutes :", data);
   
       const normalized = data.map((photo) => {
@@ -57,8 +57,12 @@ export default function CalendarScreen() {
   }
 
   const filteredPhotos = selectedDate
-    ? photos.filter((p) => p.date === selectedDate)
-    : [];
+  ? photos.filter((p) => {
+      const isMatch = p.date === selectedDate;
+      console.log(`Filtrage: photo date ${p.date}, selected date ${selectedDate}, match: ${isMatch}`);
+      return isMatch;
+    })
+  : [];
 
   return (
     <View style={{ flex: 1 }}>
