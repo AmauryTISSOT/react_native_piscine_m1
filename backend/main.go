@@ -42,6 +42,8 @@ func main() {
 	http.HandleFunc("/createUser", userHandler.CreateUser)
 	http.HandleFunc("/updateUser", userHandler.UpdateUser)
 	http.HandleFunc("/getUser", userHandler.GetUser)
+	http.HandleFunc("/user/profilepicture", userHandler.GetUserProfileImage)
+	http.HandleFunc("/user/updateprofilepicture", userHandler.UpdateUserProfileImage)
 
 	// Démarrage du serveur
 	fmt.Println("Server started at :8080")
