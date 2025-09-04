@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BACKEND_URL = "http://192.168.1.195:8080";
+const API_BACKEND_URL = "http://192.168.1.25:8080";
 
 const API = axios.create({
     baseURL: API_BACKEND_URL,
@@ -64,6 +64,11 @@ export const backAPI = {
     getAllPhotosByDate: async () => {
         const response = await API.get("/photos/by-date");
         return response.data;
+    },
+
+    getCountPhotos: async () => {
+        const response = await API.get("/photos/count");
+        return response.data["count"];
     },
 
     getGpsData: async () => {
