@@ -30,7 +30,7 @@ export default function CalendarScreen() {
     : [];
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, paddingTop: 50 }}>
       <Calendar
         markedDates={markedDates}
         onDayPress={(day) => {
@@ -38,6 +38,7 @@ export default function CalendarScreen() {
           setSelectedDate(day.dateString)}
 
         }
+        paddingTop={50}
       />
 
       <View style={styles.listContainer}>
