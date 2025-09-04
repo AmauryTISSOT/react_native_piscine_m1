@@ -28,7 +28,7 @@ export const backAPI = {
             name: photoFile.name || "photo.jpg",
         });
 
-        formData.append("date", date); // Format ISO 8601 (RFC3339)
+        formData.append("date", date);
         formData.append("latitude", latitude.toString());
         formData.append("longitude", longitude.toString());
 

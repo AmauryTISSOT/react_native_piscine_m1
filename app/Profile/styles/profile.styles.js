@@ -1,10 +1,10 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-    container: {
-        flex: 1,
+    scrollContainer: {
+        flexGrow: 1,
         padding: 20,
-        paddingTop: 90, // Marge supérieure pour éviter le Dynamic Island
+        paddingTop: 70,
         backgroundColor: "#f8f9fa",
     },
     card: {
@@ -82,5 +82,22 @@ export const styles = StyleSheet.create({
         padding: 10,
         marginBottom: 10,
         fontSize: 16,
+    },
+    changePhotoButton: {
+        marginTop: 10,
+        backgroundColor: "#28a745",
+        padding: 8,
+        borderRadius: 5,
+    },
+    photoOptionsContainer: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        marginTop: 10,
+    },
+    photoOptionButton: {
+        backgroundColor: "#17a2b8",
+        padding: 8,
+        borderRadius: 5,
+        marginHorizontal: 5,
     },
 });
