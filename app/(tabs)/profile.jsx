@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import { View, Text, Image, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Image, TouchableOpacity, TextInput, ScrollView, Alert } from "react-native";
+import * as ImagePicker from 'expo-image-picker';
 import { styles } from "../Profile/styles/profile.styles";
+import { backAPI } from "@/services/api";
 
 const initialProfile = {
     nom: "Fouquet",
@@ -9,11 +11,29 @@ const initialProfile = {
     tel: "+33 6 12 34 56 78",
     pays: "France",
     bio: "Passionné de voyage et de nouvelles technologies. J’aime explorer le monde et capturer des moments uniques à travers mes photos.",
+    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
 };
 
 const Profile = () => {
     const [profile, setProfile] = useState(initialProfile);
     const [isEditing, setIsEditing] = useState(false);
+    const [photos, setPhotos] = useState([]);
+
+    useEffect(() => {
+        if (isEditing) {
+            loadPhotos();
+        }
+    }, [isEditing]);
+
+    const loadPhotos = async () => {
+        try {
+            const data = await backAPI.getAllPhotos();
+            setPhotos(data);
+        } catch (err) {
+            console.log("Erreur chargement photos:", err);
+            Alert.alert("Erreur chargement photos", err.message);
+        }
+    };
 
     const handleEditPress = () => {
         setIsEditing(true);
@@ -27,14 +47,46 @@ const Profile = () => {
         setProfile({ ...profile, [field]: value });
     };
 
+    const pickImageFromGallery = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setProfile({ ...profile, avatar: result.assets[0].uri });
+        }
+    };
+
+    const pickImageFromAppPhotos = (photoUri) => {
+        setProfile({ ...profile, avatar: photoUri });
+    };
+
     return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
             <View style={styles.card}>
                 <View style={styles.avatarContainer}>
-                    <Image
-                        source={{ uri: "https://randomuser.me/api/portraits/men/1.jpg" }}
-                        style={styles.avatar}
-                    />
+                    <Image source={{ uri: profile.avatar }} style={styles.avatar} />
+                    {isEditing && (
+                        <>
+                            <TouchableOpacity style={styles.changePhotoButton} onPress={pickImageFromGallery}>
+                                <Text style={styles.buttonText}>Choisir depuis la galerie</Text>
+                            </TouchableOpacity>
+                            <View style={styles.photoOptionsContainer}>
+                                {photos.map((photoUri, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        style={styles.photoOptionButton}
+                                        onPress={() => pickImageFromAppPhotos(photoUri)}
+                                    >
+                                        <Text style={styles.buttonText}>Photo {index + 1}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        </>
+                    )}
                     {isEditing ? (
                         <>
                             <TextInput
