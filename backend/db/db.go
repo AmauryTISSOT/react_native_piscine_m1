@@ -55,6 +55,14 @@ func Migrate() {
 		log.Fatalf("Failed to create photos table: %v", err)
 	}
 
+	_, err = tx.Exec(ctx, `INSERT INTO users (first_name, password, last_name, email, phone, country, bio) 
+	VALUES ('Adrien','toto123', 'Fouquet', 'adrien.fouquet@example.com', '+33 6 12 34 56 78', 'France',
+	'Passionné de voyage et des nouvelles technologies. J''aime explorer le monde et capturer des moments uniques à travers mes photos')`)
+
+	if err != nil {
+		log.Fatalf("Failed to insert mock data to users tables: %v", err)
+	}
+
 	if err := tx.Commit(ctx); err != nil {
 		log.Fatalf("Failed to commit migration: %v", err)
 	}
