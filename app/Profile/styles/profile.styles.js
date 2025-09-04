@@ -106,16 +106,16 @@ export const styles = StyleSheet.create({
         marginHorizontal: 5,
     },
     statsBanner: {
-        backgroundColor: "#e9ecef",
-        padding: 15,
-        borderRadius: 8,
         marginTop: 20,
+        padding: 15,
+        borderRadius: 10,
+        backgroundColor: "#eaf4ff",
         alignItems: "center",
+        justifyContent: "center",
     },
     statsText: {
         fontSize: 16,
-        fontWeight: "600",
-        color: "#333",
+        fontWeight: "500",
+        color: "#007bff",
     },
-
 });
