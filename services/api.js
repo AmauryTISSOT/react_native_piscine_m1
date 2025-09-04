@@ -36,7 +36,7 @@ export const backAPI = {
         formData.append("latitude", latitude.toString());
         formData.append("longitude", longitude.toString());
 
-        const response = await API.post("/upload", formData, {
+        const response = await API.post("/photos/upload", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
@@ -52,18 +52,8 @@ export const backAPI = {
     },
 
     getAllPhotos: async () => {
-        const response = await API.get("/list");
+        const response = await API.get("/photos");
         return response.data;
-    },
-
-    getAllGpsCoordinates: async () => {
-        const response = await API.get("/photos/by-date");
-        return response.data.map((photo) => ({
-            id: photo.id,
-            latitude: photo.latitude,
-            longitude: photo.longitude,
-            date: photo.date,
-        }));
     },
 
     getAllPhotosByDate: async () => {
@@ -77,12 +67,12 @@ export const backAPI = {
     },
 
     getGpsData: async () => {
-        const response = await API.get("/gps");
+        const response = await API.get("/photos/gps");
         return response.data;
     },
 
     createUser: async (email, password) => {
-        const response = await API.post("/createUser", { email, password });
+        const response = await API.post("/users", { email, password });
         return response.data; // { id: string }
     },
 
@@ -96,14 +86,14 @@ export const backAPI = {
 
     getUser: async (email) => {
         const response = await API.get(
-            `/getUser?email=${encodeURIComponent(email)}`
+            `/users/get?email=${encodeURIComponent(email)}`
         );
         return response.data; // User object
     },
 
     getUserProfileImage: async (email) => {
         const response = await API.get(
-            `/user/profilepicture?email=${encodeURIComponent(email)}`
+            `/users/profile-picture?email=${encodeURIComponent(email)}`
         );
         return response;
     },
@@ -117,7 +107,7 @@ export const backAPI = {
         });
 
         const response = await API.post(
-            `/user/updateprofilepicture?email=${encodeURIComponent(email)}`,
+            `/users/profile-picture/update?email=${encodeURIComponent(email)}`,
             formData,
             {
                 headers: {
