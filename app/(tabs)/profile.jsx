@@ -102,7 +102,7 @@ const Profile = () => {
                                     <ScrollView
                                         horizontal={true}
                                         showsHorizontalScrollIndicator={true}
-                                        style={{ marginTop: 10 }}
+                                        style={{ marginTop: 10, marginBottom: 10 }}
                                     >
                                         {photos.map((photoUri, index) => (
                                             <TouchableOpacity
