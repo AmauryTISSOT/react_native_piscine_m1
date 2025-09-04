@@ -33,6 +33,7 @@ func main() {
 	// Enregistrement des routes HTTP
 	http.HandleFunc("/upload", handlers.UploadPhotoHandler)
 	http.HandleFunc("/photos/", handlers.GetPhotoHandler)
+	http.HandleFunc("/photos", handlers.GetPhotoById)
 	http.HandleFunc("/list", handlers.ListAllPhotosHandler)
 	http.HandleFunc("/gps", handlers.ListGPSHandler)
 	http.HandleFunc("/photos/by-date", handlers.ListPhotosByDateHandler)
