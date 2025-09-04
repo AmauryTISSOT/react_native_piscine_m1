@@ -1,20 +1,51 @@
-import { useState } from "react";
+import { backAPI } from "@/services/api";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 
-const photos = [
-  { id: "1", uri: "https://static.aujardin.info/img/img9/malus.jpg", date: "2025-09-01" },
-  { id: "2", uri: "https://images.ctfassets.net/b85ozb2q358o/oTUXkOareUEXOOtOfORer/fb08e1cbe2a6ca0afdf0e19081744ac3/pommier-1.jpg", date: "2025-09-01" },
-  { id: "3", uri: "https://images.ctfassets.net/b85ozb2q358o/34acdd126fba8f5a92db312da65c33324a98cb907326c4cf3800c8e270e1a25a/39a559b1089964d92303b3ce3e20fdd9/image.png", date: "2025-09-02" },
-];
-
 export default function CalendarScreen() {
-  const [selectedDate, setSelectedDate] = useState("null");
+  const [photos, setPhotos] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  // Charger les photos quand l'écran est focus
+  useFocusEffect(
+    useCallback(() => {
+      console.log("CalendarScreen focus → rechargement des photos");
+      loadPhotos();
+    }, [])
+  );
+
+  const loadPhotos = async () => {
+    try {
+      const data = await backAPI.getAllPhotos(); // renvoie la liste d’objets
+      console.log("Photos brutes :", data);
+  
+      const normalized = data.map((photo) => {
+        const date = new Date(photo.date).toISOString().split('T')[0]; // format AAAA-MM-JJ
+        return {
+          id: photo.id,
+          date: date,
+          url: photo.url,
+        };
+      }); 
+  
+      console.log("Photos normalisées :", normalized);
+      setPhotos(normalized);
+    } catch (err) {
+      console.log("Erreur chargement photos:", err);
+    }
+  };
+  
 
   const markedDates = photos.reduce((acc, photo) => {
-    acc[photo.date] = { marked: true, dotColor: "blue" };
-    return acc;
-  }, {});
+  if (!acc[photo.date]) {
+    acc[photo.date] = { markedDates: true, dotColor: "blue", count: 1 };
+  } else {
+    acc[photo.date].count += 1;
+  }
+  return acc;
+}, {});
 
 
   if (selectedDate) {
@@ -30,15 +61,13 @@ export default function CalendarScreen() {
     : [];
 
   return (
-    <View style={{ flex: 1, paddingTop: 50 }}>
+    <View style={{ flex: 1 }}>
       <Calendar
         markedDates={markedDates}
         onDayPress={(day) => {
-          console.log(" date cliquée : ", day.dateString);
-          setSelectedDate(day.dateString)}
-
-        }
-        paddingTop={50}
+          console.log("Date sélectionnée :", day.dateString);
+          setSelectedDate(day.dateString);
+        }}
       />
 
       <View style={styles.listContainer}>
@@ -52,7 +81,7 @@ export default function CalendarScreen() {
               keyExtractor={(item) => item.id}
               numColumns={2}
               renderItem={({ item }) => (
-                <Image source={{ uri: item.uri }} style={styles.photo} />
+                <Image source={{ uri: item.url }} style={styles.photo} />
               )}
             />
           </>
