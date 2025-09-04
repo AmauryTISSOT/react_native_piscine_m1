@@ -31,7 +31,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: "Home",
+                    title: "Accueil",
                     tabBarIcon: ({ color }) => (
                         <IconSymbol
                             size={ICONSIZE}
@@ -44,7 +44,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="calendar"
                 options={{
-                    title: "Calendar",
+                    title: "Calendrier",
                     tabBarIcon: ({ color }) => (
                         <IconSymbol
                             size={ICONSIZE}
@@ -57,7 +57,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="camera"
                 options={{
-                    title: "Camera",
+                    title: "Caméra",
                     tabBarIcon: ({ color }) => (
                         <IconSymbol
                             size={ICONSIZE}
@@ -70,7 +70,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="map"
                 options={{
-                    title: "Map",
+                    title: "Carte",
                     tabBarIcon: ({ color }) => (
                         <IconSymbol
                             size={ICONSIZE}
@@ -83,7 +83,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="photos"
                 options={{
-                    title: "Photos",
+                    title: "Mes photos",
                     tabBarIcon: ({ color }) => (
                         <IconSymbol
                             size={ICONSIZE}
